@@ -1,5 +1,5 @@
 # Getting Started with smartbrains
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).\
 To view the backend code, refer [smartbrains-api](https://github.com/Divyateja04/smartbrains-api).
 
 ## Available Scripts
