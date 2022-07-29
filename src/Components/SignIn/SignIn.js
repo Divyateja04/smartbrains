@@ -1,5 +1,6 @@
 import React from 'react';
 import 'tachyons';
+import { SERVER_URL } from './../../Constants';
 
 export default class SignIn extends React.Component {
     constructor(props){
@@ -20,7 +21,7 @@ export default class SignIn extends React.Component {
 
     onSubmitSignIn = () => {
         // console.log(this.state);
-        fetch('https://murmuring-coast-75281.herokuapp.com/signin', {
+        fetch(SERVER_URL + '/signin', {
             method: 'post',
             headers: {'Content-type':'application/json'},
             body: JSON.stringify({

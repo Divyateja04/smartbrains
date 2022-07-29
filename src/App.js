@@ -12,6 +12,7 @@ import Register from './Components/Register/Register';
 
 import Particles from 'react-particles-js';
 import particlesConfig from './Config/particlesConfig';
+import { SERVER_URL } from './Constants';
 
 const initialState = {
   input: '',
@@ -75,7 +76,7 @@ class App extends React.Component{
 
   onSubmit = () => {
     this.setState({imageUrl: this.state.input})
-    fetch('https://murmuring-coast-75281.herokuapp.com/imageurl', {
+    fetch(SERVER_URL + '/imageurl', {
         method: 'post',
         headers: {'Content-type':'application/json'},
         body: JSON.stringify({
@@ -85,7 +86,7 @@ class App extends React.Component{
       .then(response => response.json())
       .then(response => {
         if(response){
-          fetch('https://murmuring-coast-75281.herokuapp.com/image', {
+          fetch(SERVER_URL + '/image', {
             method: 'put', //gets data from image end point by putting basically increments entries value
             headers: {'Content-type':'application/json'},
             body: JSON.stringify({

@@ -1,5 +1,6 @@
 import React from 'react';
 import 'tachyons';
+import { SERVER_URL } from './../../Constants';
 
 export default class Register extends React.Component {
     constructor(props){
@@ -25,7 +26,7 @@ export default class Register extends React.Component {
 
     onSubmitRegister = () =>{
         //console.log(this.state);
-        fetch('https://murmuring-coast-75281.herokuapp.com/register', {
+        fetch(SERVER_URL + '/register', {
             method: 'post',
             headers: {'Content-type':'application/json'},
             body: JSON.stringify({
