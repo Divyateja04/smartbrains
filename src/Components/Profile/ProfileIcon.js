@@ -18,7 +18,7 @@ export default class ProfileIcon extends Component {
 
     render() {
         return (
-            <div class="pa4 tc">
+            <div className="pa4 tc">
                 <Dropdown isOpen={this.state.dropDownOpen} toggle={this.toggle} direction={"down"}>
                     <DropdownToggle
                         data-toggle="dropdown"

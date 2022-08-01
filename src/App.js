@@ -40,6 +40,40 @@ class App extends React.Component{
     this.state = initialState;  
   }
 
+  componentDidMount(){
+    const token = window.sessionStorage.getItem('token');
+    if(token){
+      fetch(SERVER_URL + "/signin", {
+        method: 'post',
+        headers: {
+          'Content-type':'application/json',
+          'Authorization': token
+        }
+      })
+      .then(resp => resp.json())
+      .then(data => {
+        console.log(data);
+        if(data && data.id){
+          fetch(SERVER_URL + "/profile/" + data.id, {
+            method: 'get',
+            headers: {
+              "Authorization": token
+            }
+          })
+          .then(userRes => userRes.json())
+          .then(user => {
+            if(user && user.email){
+              this.loadUser(user);
+              this.onRouteChange('home');
+            }
+          })
+          .catch(err => console.log(err));
+        }
+      })
+      .catch(console.log);
+    }
+  }
+
   loadUser = (data) => {
     this.setState({
       user: {
@@ -62,25 +96,28 @@ class App extends React.Component{
   }
 
   calculateFaceLocation = (data) => {
-    const clarifaiFaces = data.outputs[0].data.regions.map(region => region.region_info.bounding_box); 
-    const image = document.getElementById('inputimage');
-    const width = Number(image.width);
-    const height = Number(image.height);
+    if(data && data.outputs){
+      const clarifaiFaces = data.outputs[0].data.regions.map(region => region.region_info.bounding_box); 
+      const image = document.getElementById('inputimage');
+      const width = Number(image.width);
+      const height = Number(image.height);
 
-    //console.log(width, height)
-    return clarifaiFaces.map(face => {
-      return {
-        leftCol: face.left_col * width,
-        topRow: face.top_row * height,
-        rightCol: width - (face.right_col * width),
-        bottomRow: height - (face.bottom_row * height),
-      }
-    })
+      //console.log(width, height)
+      return clarifaiFaces.map(face => {
+        return {
+          leftCol: face.left_col * width,
+          topRow: face.top_row * height,
+          rightCol: width - (face.right_col * width),
+          bottomRow: height - (face.bottom_row * height),
+        }
+      })
+    }
+    return;
   }
 
   displayFaceBox = (returnedArray) => {
-    //console.log("Running from displayFaceBox", returnedArray)
-    this.setState({boxes: returnedArray});
+    console.log("Running from displayFaceBox", returnedArray)
+    if(returnedArray) this.setState({boxes: returnedArray});
   }
 
   onInputChange = (event) => {
@@ -92,7 +129,10 @@ class App extends React.Component{
     this.setState({imageUrl: this.state.input})
     fetch(SERVER_URL + '/imageurl', {
         method: 'post',
-        headers: {'Content-type':'application/json'},
+        headers: {
+          'Content-type':'application/json',
+          'Authorization': window.sessionStorage.getItem('token')
+        },
         body: JSON.stringify({
             input: this.state.input //sends image link too
         })
@@ -102,7 +142,10 @@ class App extends React.Component{
         if(response){
           fetch(SERVER_URL + '/image', {
             method: 'put', //gets data from image end point by putting basically increments entries value
-            headers: {'Content-type':'application/json'},
+            headers: {
+              'Content-type':'application/json',
+              'Authorization': window.sessionStorage.getItem('token')
+            },
             body: JSON.stringify({
                 id: this.state.user.id //sends id
             })

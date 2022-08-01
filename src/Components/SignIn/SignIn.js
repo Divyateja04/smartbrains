@@ -20,6 +20,10 @@ export default class SignIn extends React.Component {
         this.setState({signInPassword: event.target.value});
     }
 
+    saveAuthInSession = (token) => {
+        window.sessionStorage.setItem('token', token);
+    }
+
     onSubmitSignIn = () => {
         // console.log(this.state);
         fetch(SERVER_URL + '/signin', {
@@ -32,9 +36,22 @@ export default class SignIn extends React.Component {
         })
         .then(response => response.json())
         .then(data => {
-            if(data.id){
-                this.props.loadUser(data);
-                this.props.onRouteChange("home");
+            if(data.userId && data.success === 'true'){
+                this.saveAuthInSession(data.token);
+                fetch(SERVER_URL + "/profile/" + data.userId, {
+                    method: 'get',
+                    headers: {
+                      "Authorization": data.token
+                    }
+                  })
+                  .then(userRes => userRes.json())
+                  .then(user => {
+                    if(user && user.email){
+                      this.props.loadUser(user);
+                      this.props.onRouteChange('home');
+                    }
+                  })
+                  .catch(err => console.log(err));
             }
         })
     }
